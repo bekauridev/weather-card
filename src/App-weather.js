@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 export default function App() {
   //
-  const [search, setSearch] = useState(" ");
+  const [search, setSearch] = useState("");
   const [error, setError] = useState("");
 
   useState(function () {
@@ -78,13 +78,14 @@ function WeatherData({ search }) {
   useEffect(
     function () {
       const controller = new AbortController();
+      const trimmedSearch = search.trim();
       async function weatherCall() {
         try {
           setIsLoading(true);
           setError("");
 
           const res = await fetch(
-            `http://api.weatherapi.com/v1/current.json?key=d0eeec8698b84bba80c184012241001&q=${search}&aqi=no`,
+            `https://api.weatherapi.com/v1/current.json?key=d0eeec8698b84bba80c184012241001&q=${trimmedSearch}&aqi=no`,
             { signal: controller.signal }
           );
           if (!res.ok) throw new Error("Not found");
@@ -100,8 +101,8 @@ function WeatherData({ search }) {
         }
       }
 
-      if (search.length < 3) {
-        setError("Please enter a valid city name !");
+      if (trimmedSearch.length < 3) {
+        setError("Please enter a valid city or country name !");
         return;
       }
       weatherCall();
@@ -123,14 +124,35 @@ function WeatherData({ search }) {
 }
 
 function Weather({ data }) {
+  const {
+    location: { country, name: city },
+    current: {
+      condition: { text: weatherCondition, icon },
+      temp_c: celsius,
+      temp_f: fahrenheit,
+      wind_kph,
+      wind_mph,
+    },
+  } = data;
+
+  useEffect(
+    function () {
+      if (!city) return;
+      document.title = `Weather in | ${city}`;
+
+      return function () {
+        document.title = "Weather App";
+      };
+    },
+    [city]
+  );
+
   return (
     <div className="weather__card">
-      <p className="weather__country default-font-style">
-        {data.location.country}
-      </p>
-      <p className="weather__sity">
-        {data.current.condition.text}&#160;
-        {data.location.name}
+      <p className="weather__country default-font-style">{country}</p>
+      <p className="weather__city">
+        {weatherCondition}&#160;
+        {city}
       </p>
       <svg
         className="weather__icon"
@@ -142,28 +164,18 @@ function Weather({ data }) {
         height="50px"
         viewBox="0 0 100 100"
       >
-        <image
-          width="100"
-          height="100"
-          x="0"
-          y="0"
-          href={data.current.condition.icon}
-        ></image>
+        <image width="100" height="100" x="0" y="0" href={icon}></image>
       </svg>
-      <p className="weather__temp">{data.current.temp_c}°</p>
+      <p className="weather__temp">{celsius}°</p>
       <p className="weather__wind default-font-style">wind</p>
       <div className="weather-wind-container">
         <div className="weather-wind-container-min">
           <p className="weather-wind-container-min__minHeading">KPH</p>
-          <p className="weather-wind-container-max__minTemp">
-            {data.current.wind_kph}
-          </p>
+          <p className="weather-wind-container-max__minTemp">{wind_kph}</p>
         </div>
         <div className="weather-wind-container-max">
           <p className=" weather-wind-container-min__maxHeading">MPH</p>
-          <p className="weather-wind-container-max__maxTemp">
-            {data.current.wind_mph}
-          </p>
+          <p className="weather-wind-container-max__maxTemp">{wind_mph}</p>
         </div>
       </div>
     </div>
