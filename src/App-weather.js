@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export default function App() {
   //
@@ -54,6 +54,7 @@ function Search({ search, onSetSearch }) {
   return (
     <input
       className="App__input"
+      placeholder="Search"
       aria-label="Search"
       type="text"
       required
@@ -129,7 +130,7 @@ function Weather({ data }) {
     current: {
       condition: { text: weatherCondition, icon },
       temp_c: celsius,
-      temp_f: fahrenheit,
+
       wind_kph,
       wind_mph,
     },

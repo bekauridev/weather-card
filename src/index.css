@@ -35,7 +35,7 @@ body {
   gap: 1rem;
 
   max-width: 220px;
-  height: 100dvh;
+  height: 100vh;
   margin: 0 auto;
 }
 
@@ -46,18 +46,22 @@ body {
   font-size: 1.2rem;
   letter-spacing: 1.2px;
   color: #fff;
-  background-color: rgba(65, 65, 65, 0.884);
   border: none;
   padding: 2px 3px;
   outline: 1px solid rgba(134, 134, 134, 0.884);
+  background-color: rgba(65, 65, 65, 0.884);
 }
 .App__input:focus {
   outline: 1px solid rgba(255, 255, 255, 0.089);
 }
+.App__input::placeholder {
+  font-size: 1.1rem;
+}
+
 /* !! Weather card !! */
 .weather {
   width: 220px;
-  height: 250px;
+  min-height: 250px;
   padding: 1rem;
   border-radius: 10px;
 
